@@ -13,14 +13,15 @@ def menu():
         print('[1] Register New Item')
         print('[2] List Items of Stock')
         print('[3] Remove Item from stock')
-        print('[4] Exit')
+        print('[4] Update')
+        print('[5] Exit')
 
         try:
             option = int(input('Select One Option: '))
         except ValueError:
-            print('Ops, select one option between 1 and 4')
+            print('Ops, select one option between 1 and 5')
             continue
-        if 1 <= option <=4:
+        if 1 <= option <=5:
             if option == 1:
                 registeritem()
             elif option == 2:
@@ -28,6 +29,8 @@ def menu():
             elif option == 3:
                 removeitem()
             elif option == 4:
+                update()
+            elif option == 5:
                 break
         else:
             print('Invalid Option! Please type a number between 1 and 4 of menu.')
@@ -109,4 +112,48 @@ def removeitem():
             print(f"Error: Item with ID {id_to_remove} was not found in stock.")
         
         input('\n Press ENTER to return to the main menu...')
+
+def update():
+    if not global_stock:
+        print('Stock is currently empty')
+        return
+    else:
+        listitems(pause_on_exit=False)
+    id_to_update = int(input('Enter te ID: '))
+    item_found = False
+
+    for index, item in enumerate(global_stock, start=0):
+        if item['ID'] == id_to_update:
+            item_found = True
+            choice_to_update = str(input('What do you want do update? [Item or Quantity [I/Q]]: ')).upper()
+
+            if choice_to_update == 'I' or choice_to_update == 'ITEM':
+                new_name = str(input('Enter the NEW name of ITEM: '))
+                item['Name'] = new_name
+                print('-----------------------------------------')
+                print('>>>>Sucess!! You update your item!!!<<<<')
+                print('-----------------------------------------')
+                break
+
+            elif choice_to_update == 'Q' or choice_to_update == 'QUANTITY':
+                while True:
+                    try:
+                        new_quantity = int(input('What is the NEW quantity: '))
+                        if new_quantity <0:
+                                print('Quantity must be positive')
+                        else:
+                            item['Quantity'] = new_quantity
+                            print('-----------------------------------------')
+                            print('>>>> | Sucess You update your item | <<<<')
+                            print('-----------------------------------------')
+                            break
+                    except ValueError:
+                        print('Please, Enter a Int Number!')
+                break
+
+
+    if not item_found:
+            print(f"Error: Item with ID {id_to_update} was not found.")            
+
+        
 menu()
