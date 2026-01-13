@@ -1,8 +1,21 @@
+import sqlite3
 
-#global list to simulate a Data base.
-global_stock=[]
-#id item
-item_id_counter = 0
+def start_db():
+    connection = sqlite3.connect('stock_almox.db')
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS stock_almox(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        price REAL)
+    """)
+    
+    connection.commit()
+    connection.close()
+    print('Database Ready!')
+
 
 #menu do estoque.
 def menu():
@@ -36,7 +49,6 @@ def menu():
             print('Invalid Option! Please type a number between 1 and 4 of menu.')
 #registro de item. 
 def registeritem():
-    global item_id_counter
     print('-----------------------')
     print('>>>Register new item<<<')
     print('-----------------------')
@@ -51,13 +63,16 @@ def registeritem():
         except ValueError:
             print('Please, Enter a Int Number!')
 
-    item={
-        "ID": item_id_counter,
-        "Name": name_of_item,
-        "Quantity": quantity_of_item
-    }
-    global_stock.append(item)
-    item_id_counter += 1
+    price_of_item = float(input('Enter the Value of the item: '))
+
+    connection = sqlite3.connect('stock_almox.db')
+    cursor = connection.cursor()
+
+    cursor.execute("INSERT INTO stock_almox (description,quantity,price)VALUES (?,?,?)",
+                   (name_of_item,quantity_of_item,price_of_item))
+    connection.commit()
+    connection.close()
+    
     print('--------------------')
     print('>>>Add successfully<<<')
     print('--------------------')
@@ -113,6 +128,7 @@ def removeitem():
         
         input('\n Press ENTER to return to the main menu...')
 
+# Atualização de itens
 def update():
     if not global_stock:
         print('Stock is currently empty')
@@ -155,5 +171,5 @@ def update():
     if not item_found:
             print(f"Error: Item with ID {id_to_update} was not found.")            
 
-        
+start_db()        
 menu()
